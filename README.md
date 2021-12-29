@@ -22,6 +22,7 @@ Most of my "resources" were actually from a city dump.
 Although I now have collected some decent tools much of what I use here is hacked or recycled materials.
 Similarly, in the past, nearly every computer I've used has been a broken hand-me-down I repaired and upgraded myself. 
 
+# what to expect
 The following are a series of projects and edits on my journey to learn. 
 Although most of this will be reinventing the wheel to some extent 
 and will be based upon resources and workes collected online I hope some 
