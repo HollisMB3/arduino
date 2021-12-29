@@ -1,0 +1,109 @@
+// ElectronicNoobs Code didn't work until adding the following libraries 
+// github.com/maniacbug/RF24
+// RF24 from Arduino IDE
+// RF24 Network from Arduino IDE 
+// Used Getting Started script on both NRF24 Modules to test their communication.
+// Realized out of the box several of the NRF24L01 +PA Modules were deffective. 
+// NOTE: After installing libraries Use File/Examples/NRF24/Getting Started script 
+// on each module to test TX and RX and make sure radio modules work and communicate 
+// When starting out it helps to use breakout boards for these modules
+// Also make certain these pins are set to these positions on breakout boards 
+// CE CSN SCK MO  MI
+// D9 D10 D13 D11 D12 
+// Otherwise Getting Started script will give Radio Not Working message. 
+
+// Derived code is below
+
+/* Tranmsitter code for the Arduino Radio control with PWM output
+ * Install the NRF24 library to your IDE
+ * Upload this code to the Arduino UNO, NANO, Pro mini (5V,16MHz)
+ * Connect a NRF24 module to it:
+ 
+    Module // Arduino UNO,NANO
+    
+    GND    ->   GND
+    Vcc    ->   3.3V
+    CE     ->   D9
+    CSN    ->   D10
+    CLK    ->   D13
+    MOSI   ->   D11
+    MISO   ->   D12
+
+This code transmits 7 channels with data from pins A0, A1, A2, A3, D2 and D3
+Adapted from: https://www.youtube.com/c/ELECTRONOOBS Please, like share and subscribe: They rock! 
+
+// IMPORTED LIBRARIES 
+
+#include <SPI.h>
+#include <nRF24L01.h> // Module specific library 
+#include <RF24.h>
+#include <Servo.h>  //To create PWM signals we need this library
+
+// This is the pipe through which the NRF24 Modules speak - key specific to modules. 
+const uint64_t my_radio_pipe = 0xE8E8F0F0E1LL; // = Any name must be specific to both TX and RX 
+
+RF24 radio(9, 10);  //Set CE and CSN pins // Some use (7, 8) must be same for TX and RX
+
+// The sizeof this struct should not exceed 32 bytes
+// TX channels out 
+struct Data_to_be_sent {
+  byte ch1;
+  byte ch2;
+  byte ch3;
+  byte ch4;
+  byte ch5;
+  byte ch6;
+  byte ch7;
+};
+
+//Create a variable with the structure above and name it sent_data
+Data_to_be_sent sent_data;
+
+
+
+void setup()
+{
+  radio.begin();
+  radio.setAutoAck(false);
+  radio.setDataRate(RF24_250KBPS);
+  radio.openWritingPipe(my_radio_pipe);
+  //BabyDev altered code to enhance relaibility 
+  // because of random shutoffs during use. 
+  radio.setRetries(15, 15); // 4000 millisesonds .06 seconds worth of reties 
+  radio.setPALevel(RF24_PA_HIGH); // set NRF24 power level high 
+   
+
+  //Reset each channel value
+  sent_data.ch1 = 0; // A0 Throttle / ESC / For flight use 127 / RC Car 0. 
+  sent_data.ch2 = 127; // A1 Joystic or Potentiometer X or Y 
+  sent_data.ch3 = 127; // A2 // Joystic or Potentiometer X or Y 
+  sent_data.ch4 = 127; // A3 // Joystic or Potentiometer X or Y
+  sent_data.ch5 = 0;   // A4 // Digital write 2 // SWitch
+  sent_data.ch6 = 0;   // A5 // Digital Read 3 // Switch 
+  sent_data.ch7 = 0;   // A6 // Digital Read 3 // Button?  
+}
+
+/**************************************************/
+
+
+void loop()
+{
+  /*If your channel is reversed, just swap 0 to 255 by 255 to 0 below
+  EXAMPLE:
+  Normal:    data.ch1 = map( analogRead(A0), 0, 1024, 0, 255);
+  Reversed:  data.ch1 = map( analogRead(A0), 0, 1024, 255, 0);  
+  BohemianBabyDev says "The same effect may be achieved using DPDT switches on each potentiometer
+  which will reverse the + and - thus creating a reverse signal. */
+  
+  sent_data.ch1 = map( analogRead(A0), 0, 1024, 0, 255); // to RX D2 Throttle 
+  sent_data.ch2 = map( analogRead(A1), 0, 1024, 0, 255); // to RX D3
+  sent_data.ch3 = map( analogRead(A2), 0, 1024, 0, 255); // to RX D4
+  sent_data.ch4 = map( analogRead(A3), 0, 1024, 0, 255); // to RX D5
+  sent_data.ch5 = digitalRead(2); // Digital on/off to RX D6 switch 
+  sent_data.ch6 = digitalRead(3); // Digital on/off to RX D7 switch 
+  sent_data.ch7 = map( analogRead(A4), 0, 1024, 0, 255); // to RX D8
+
+  //radio.write(&sent_data, sizeof(Data_to_be_sent));
+  // Bohemian Baby Dev added boolean
+ boolean radioACK_OK = radio.write(&sent_data, sizeof(Data_to_be_sent));
+}
