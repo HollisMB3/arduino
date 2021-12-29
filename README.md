@@ -1,4 +1,4 @@
-# arduino
+# Arduino
 Open Source Arduino builds and codes
 
 After finishing coding bootcamp we became a bit bored and wanted an excuse to continue learning. 
@@ -12,7 +12,7 @@ I would love to be able to build these things over night but there are always li
 So, I start with a project of "Play" per say, not one of some mythical career goal.
 That is, build the "magic cookie" or carrot that motivates one to solve problems and expand personal education goals.  
 
-# personal history 
+# Personal history 
 Libaries were a favorite place for me when I was younger. 
 I taught myself various magic tricks, juggling, guitar, and basic electronics all from simple reading materials.
 My first electronics project at the age of 11 was harvesting copper wire and building electric motors. 
@@ -22,7 +22,7 @@ Most of my "resources" were actually from a city dump.
 Although I now have collected some decent tools much of what I use here is hacked or recycled materials.
 Similarly, in the past, nearly every computer I've used has been a broken hand-me-down I repaired and upgraded myself. 
 
-# what to expect
+# What to expect
 The following are a series of projects and edits on my journey to learn. 
 Although most of this will be reinventing the wheel to some extent 
 and will be based upon resources and workes collected online I hope some 
